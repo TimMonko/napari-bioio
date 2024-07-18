@@ -288,7 +288,7 @@ def get_reader(
         # There is an assumption that the images are stackable and
         # I think it is also safe to assume that if stackable, they are of the same type
         # So only determine reader for the first one
-        BioImage.determine_reader(path)
+        BioImage.determine_plugin(path)
 
         # The above line didn't error so we know we have a supported reader
         # Return a partial function with in_memory determined
