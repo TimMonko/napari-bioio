@@ -1,12 +1,12 @@
-name: napari-aicsimageio
+name: napari-bioio
 schema_version: 0.1.0
 contributions:
   commands:
-  - id: napari-aicsimageio.get_reader
-    title: Get AICSImageIO Reader
-    python_name: napari_aicsimageio.core:get_reader
+  - id: napari-bioio.get_reader
+    title: Get BioIO Reader
+    python_name: napari_bioio.core:get_reader
   readers:
-  - command: napari-aicsimageio.get_reader
+  - command: napari-bioio.get_reader
     filename_patterns: [
       '*.1sc', '*.2fl', '*.3fr', '*.acff', '*.acqp', '*.afi', '*.afm', '*.aim', '*.al3d',
       '*.ali', '*.am', '*.amiramesh', '*.ano', '*.apl', '*.arf', '*.array-like', '*.arw',

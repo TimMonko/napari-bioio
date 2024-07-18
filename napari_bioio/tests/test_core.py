@@ -9,7 +9,7 @@ import npe2
 import numpy as np
 import pytest
 
-from napari_aicsimageio import core
+from napari_bioio import core
 
 if TYPE_CHECKING:
     from napari import Viewer

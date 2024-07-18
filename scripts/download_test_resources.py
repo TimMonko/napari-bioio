@@ -65,7 +65,7 @@ def download_test_resources(args: Args):
     try:
         # Get test resources dir
         resources_dir = (
-            Path(__file__).parent.parent / "napari_aicsimageio" / "tests" / "resources"
+            Path(__file__).parent.parent / "napari_bioio" / "tests" / "resources"
         ).resolve()
         resources_dir.mkdir(exist_ok=True)
 

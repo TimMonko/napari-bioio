@@ -7,8 +7,9 @@ from logging import getLogger
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-from aicsimageio import AICSImage, exceptions
-from aicsimageio.dimensions import DimensionNames
+from bioio import BioImage
+from bioio_base.dimensions import DimensionNames
+from bioio_base import exceptions
 from qtpy.QtWidgets import (
     QCheckBox,
     QGroupBox,
@@ -25,7 +26,7 @@ logger = getLogger(__name__)
 
 ###############################################################################
 
-AICSIMAGEIO_CHOICES = "AICSImageIO Scene Management"
+BIOIO_CHOICES = "BioIO Scene Management"
 CLEAR_LAYERS_ON_SELECT = "Clear All Layers on New Scene Selection"
 UNPACK_CHANNELS_TO_LAYERS = "Unpack Channels as Layers"
 DONT_MERGE_MOSAICS = "Don't Merge Mosaics"
@@ -39,7 +40,7 @@ IN_MEM_THRESHOLD_SIZE_BYTES = 4e9  # 4GB
 
 
 def _get_full_image_data(
-    img: AICSImage,
+    img: BioImage,
     in_memory: bool,
     reconstruct_mosaic: bool = True,
 ) -> xr.DataArray:
@@ -53,7 +54,7 @@ def _get_full_image_data(
         # Catch reader does not support tile stitching
         except NotImplementedError:
             logger.warning(
-                "AICSImageIO: Mosaic tile stitching "
+                "BioIO: Mosaic tile stitching "
                 "not yet supported for this file format reader."
             )
 
@@ -64,7 +65,7 @@ def _get_full_image_data(
 
 
 # Function to get Metadata to provide with data
-def _get_meta(path: "PathLike", data: xr.DataArray, img: AICSImage) -> Dict[str, Any]:
+def _get_meta(path: "PathLike", data: xr.DataArray, img: BioImage) -> Dict[str, Any]:
     meta: Dict[str, Any] = {}
     if DimensionNames.Channel in data.dims:
         # Construct basic metadata
@@ -130,7 +131,7 @@ def _widget_is_checked(widget_name: str) -> bool:
     viewer = napari.current_viewer()
 
     # Get scene management widget
-    scene_manager_choices_widget = viewer.window._dock_widgets[AICSIMAGEIO_CHOICES]
+    scene_manager_choices_widget = viewer.window._dock_widgets[BIOIO_CHOICES]
     for child in scene_manager_choices_widget.widget().children():
         if isinstance(child, QCheckBox):
             if child.text() == widget_name:
@@ -140,14 +141,14 @@ def _widget_is_checked(widget_name: str) -> bool:
 
 
 # Function to handle multi-scene files.
-def _get_scenes(path: "PathLike", img: AICSImage, in_memory: bool) -> None:
+def _get_scenes(path: "PathLike", img: BioImage, in_memory: bool) -> None:
     import napari
 
     # Get napari viewer from current process
     viewer = napari.current_viewer()
 
     # Add a checkbox widget if not present
-    if AICSIMAGEIO_CHOICES not in viewer.window._dock_widgets:
+    if BIOIO_CHOICES not in viewer.window._dock_widgets:
         # Create a checkbox widget to set "Clear On Scene Select" or not
         scene_clear_checkbox = QCheckBox(CLEAR_LAYERS_ON_SELECT)
         scene_clear_checkbox.setChecked(False)
@@ -172,7 +173,7 @@ def _get_scenes(path: "PathLike", img: AICSImage, in_memory: bool) -> None:
         viewer.window.add_dock_widget(
             scene_manager_group,
             area="right",
-            name=AICSIMAGEIO_CHOICES,
+            name=BIOIO_CHOICES,
         )
 
     # Create the list widget and populate with the ids & scenes in the file
@@ -229,11 +230,11 @@ def reader_function(
     """
     # Only support single path
     if isinstance(path, list):
-        logger.info("AICSImageIO: Multi-file reading not yet supported.")
+        logger.info("BioIO: Multi-file reading not yet supported.")
         return None
 
     if in_memory is None:
-        from aicsimageio.utils.io_utils import pathlike_to_fs
+        from bioio_base.io import pathlike_to_fs
         from psutil import virtual_memory
 
         fs, path = pathlike_to_fs(path)
@@ -247,15 +248,15 @@ def reader_function(
         _in_memory = in_memory
 
     # Alert console of how we are loading the image
-    logger.info(f"AICSImageIO: Reader will load image in-memory: {_in_memory}")
+    logger.info(f"BioIO: Reader will load image in-memory: {_in_memory}")
 
     # Open file and get data
-    img = AICSImage(path)
+    img = BioImage(path)
 
     # Check for multiple scenes
     if len(img.scenes) > 1:
         logger.info(
-            f"AICSImageIO: Image contains {len(img.scenes)} scenes. "
+            f"BioIO: Image contains {len(img.scenes)} scenes. "
             f"Supporting more than the first scene is experimental. "
             f"Select a scene from the list widget. There may be dragons!"
         )
@@ -275,11 +276,11 @@ def get_reader(
     path: "PathLike", in_memory: Optional[bool] = None
 ) -> Optional["ReaderFunction"]:
     """
-    Given a single path or list of paths, return the appropriate aicsimageio reader.
+    Given a single path or list of paths, return the appropriate bioio reader.
     """
     # Only support single path
     if isinstance(path, list):
-        logger.info("AICSImageIO: Multi-file reading not yet supported.")
+        logger.info("BioIO: Multi-file reading not yet supported.")
         return None
 
     # See if there is a supported reader for the file(s) provided
@@ -287,7 +288,7 @@ def get_reader(
         # There is an assumption that the images are stackable and
         # I think it is also safe to assume that if stackable, they are of the same type
         # So only determine reader for the first one
-        AICSImage.determine_reader(path)
+        BioImage.determine_reader(path)
 
         # The above line didn't error so we know we have a supported reader
         # Return a partial function with in_memory determined
@@ -295,14 +296,14 @@ def get_reader(
 
     # No supported reader, return None
     except exceptions.UnsupportedFileFormatError:
-        logger.warning("AICSImageIO: Unsupported file format.")
+        logger.warning("BioIO: Unsupported file format.")
         return None
 
     except Exception as e:
-        logger.warning("AICSImageIO: exception occurred during reading...")
+        logger.warning("BioIO: exception occurred during reading...")
         logger.warning(e)
         logger.warning(
-            "If this issue looks like a problem with AICSImageIO, "
+            "If this issue looks like a problem with BioIO, "
             "please file a bug report: "
             "https://github.com/AllenCellModeling/napari-aicsimageio"
         )
