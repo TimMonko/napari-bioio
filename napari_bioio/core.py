@@ -1,15 +1,14 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 from __future__ import annotations
 
 from functools import partial
 from logging import getLogger
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any
 
 from bioio import BioImage
-from bioio_base.dimensions import DimensionNames
 from bioio_base import exceptions
+from bioio_base.dimensions import DimensionNames
 from qtpy.QtWidgets import (
     QCheckBox,
     QGroupBox,
@@ -65,8 +64,8 @@ def _get_full_image_data(
 
 
 # Function to get Metadata to provide with data
-def _get_meta(path: "PathLike", data: xr.DataArray, img: BioImage) -> Dict[str, Any]:
-    meta: Dict[str, Any] = {}
+def _get_meta(path: PathLike, data: xr.DataArray, img: BioImage) -> dict[str, Any]:
+    meta: dict[str, Any] = {}
     if DimensionNames.Channel in data.dims:
         # Construct basic metadata
         # Use filename if single scene and no scene name is available
@@ -97,7 +96,7 @@ def _get_meta(path: "PathLike", data: xr.DataArray, img: BioImage) -> Dict[str, 
         meta["rgb"] = True
 
     # Handle scales
-    scale: List[float] = []
+    scale: list[float] = []
     # check the dims of the squeezed array for scale values
     for dim in data.dims:
         if dim in [
@@ -141,7 +140,7 @@ def _widget_is_checked(widget_name: str) -> bool:
 
 
 # Function to handle multi-scene files.
-def _get_scenes(path: "PathLike", img: BioImage, in_memory: bool) -> None:
+def _get_scenes(path: PathLike, img: BioImage, in_memory: bool) -> None:
     import napari
 
     # Get napari viewer from current process
@@ -223,11 +222,9 @@ def _get_scenes(path: "PathLike", img: BioImage, in_memory: bool) -> None:
 
 
 def reader_function(
-    path: "PathLike", in_memory: Optional[bool] = None
-) -> Optional[List["LayerData"]]:
-    """
-    Given a single path return a list of LayerData tuples.
-    """
+    path: PathLike, in_memory: bool | None = None
+) -> list[LayerData] | None:
+    """Given a single path return a list of LayerData tuples."""
     # Only support single path
     if isinstance(path, list):
         logger.info("BioIO: Multi-file reading not yet supported.")
@@ -272,12 +269,8 @@ def reader_function(
         return [(data.data, meta, "image")]
 
 
-def get_reader(
-    path: "PathLike", in_memory: Optional[bool] = None
-) -> Optional["ReaderFunction"]:
-    """
-    Given a single path or list of paths, return the appropriate bioio reader.
-    """
+def get_reader(path: PathLike, in_memory: bool | None = None) -> ReaderFunction | None:
+    """Given a single path or list of paths, return the appropriate bioio reader."""
     # Only support single path
     if isinstance(path, list):
         logger.info("BioIO: Multi-file reading not yet supported.")

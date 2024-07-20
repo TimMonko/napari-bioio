@@ -35,6 +35,10 @@ download-test-resources:
 lint:
 	pre-commit run --all-files
 
+# run tests
+test:
+	pytest napari_bioio
+
 ###############################################################################
 # Release and versioning
 

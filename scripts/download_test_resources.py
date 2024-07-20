@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+
+# Ignore typing in the whole file
+# type: ignore
 
 import argparse
 import logging
@@ -71,7 +73,7 @@ def download_test_resources(args: Args):
 
         # Use or read top hash
         if args.top_hash is None:
-            with open(Path(__file__).parent / "TEST_RESOURCES_HASH.txt", "r") as f:
+            with open(Path(__file__).parent / "TEST_RESOURCES_HASH.txt") as f:
                 top_hash = f.readline().rstrip()
         else:
             top_hash = args.top_hash
@@ -87,7 +89,7 @@ def download_test_resources(args: Args):
             path="resources",
         )
 
-        log.info(f"Completed package download.")
+        log.info("Completed package download.")
 
     # Catch any exception
     except Exception as e:

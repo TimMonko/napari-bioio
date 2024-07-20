@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
-"""Top-level package for napari-aicsimageio."""
+"""Top-level package for napari-bioio."""
 
 from importlib.metadata import PackageNotFoundError, version
 
 try:
-    __version__ = version("napari-aicsimageio")
+    __version__ = version("napari-bioio")
 except PackageNotFoundError:
     __version__ = "uninstalled"
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
+from collections.abc import Callable
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple, Type
+from typing import TYPE_CHECKING, Any
 
 import dask.array as da
 import npe2
@@ -87,8 +87,8 @@ def test_reader(
     filename: str,
     in_memory: bool,
     expected_dtype: type,
-    expected_shape: Tuple[int, ...],
-    expected_meta: Dict[str, Any],
+    expected_shape: tuple[int, ...],
+    expected_meta: dict[str, Any],
     npe2pm: "TestPluginManager",
 ) -> None:
     # Resolve filename to filepath
@@ -117,7 +117,7 @@ def test_reader(
         assert meta == expected_meta  # type: ignore
 
         # confirm that this also works via npe2
-        with npe2pm.tmp_plugin(package="napari-aicsimageio") as plugin:
+        with npe2pm.tmp_plugin(package="napari-bioio") as plugin:
             [via_npe2] = npe2.read([path], stack=False, plugin_name=plugin.name)
             assert via_npe2[0].shape == data.shape  # type: ignore
 
@@ -145,8 +145,8 @@ def test_for_multiscene_widget(
     resources_dir: Path,
     filename: str,
     in_memory: bool,
-    expected_dtype: Type["ArrayLike"],
-    expected_shape: Tuple[int, ...],
+    expected_dtype: type["ArrayLike"],
+    expected_shape: tuple[int, ...],
 ) -> None:
     # Make a viewer
     viewer = make_napari_viewer()
