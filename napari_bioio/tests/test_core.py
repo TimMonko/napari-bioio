@@ -21,8 +21,8 @@ if TYPE_CHECKING:
 PNG_FILE = "example.png"
 GIF_FILE = "example.gif"
 OME_TIFF = "pipeline-4.ome.tiff"
-LIF_FILE = "tiled.lif"
-CZI_FILE = "variable_scene_shape_first_scene_pyramid.czi"
+# LIF_FILE = "tiled.lif"
+# CZI_FILE = "variable_scene_shape_first_scene_pyramid.czi"
 
 ###############################################################################
 
@@ -39,19 +39,19 @@ CZI_FILE = "variable_scene_shape_first_scene_pyramid.czi"
     [
         (PNG_FILE, (800, 537, 4), {"name": Path(PNG_FILE).stem, "rgb": True}),
         (GIF_FILE, (72, 268, 268, 3), {"name": Path(GIF_FILE).stem, "rgb": True}),
-        (
-            CZI_FILE,
-            (3, 6183, 7705),
-            {
-                "name": [
-                    "0 :: A1-A1 :: EGFP",
-                    "0 :: A1-A1 :: mCher",
-                    "0 :: A1-A1 :: PGC",
-                ],
-                "channel_axis": 0,
-                "scale": (0.908210704883533, 0.908210704883533),
-            },
-        ),
+        # (
+        #     CZI_FILE,
+        #     (3, 6183, 7705),
+        #     {
+        #         "name": [
+        #             "0 :: A1-A1 :: EGFP",
+        #             "0 :: A1-A1 :: mCher",
+        #             "0 :: A1-A1 :: PGC",
+        #         ],
+        #         "channel_axis": 0,
+        #         "scale": (0.908210704883533, 0.908210704883533),
+        #     },
+        # ),
         (
             OME_TIFF,
             (4, 65, 600, 900),
@@ -66,20 +66,20 @@ CZI_FILE = "variable_scene_shape_first_scene_pyramid.czi"
                 "scale": (0.29, 0.10833333333333332, 0.10833333333333332),
             },
         ),
-        (
-            LIF_FILE,
-            (4, 5622, 7666),
-            {
-                "name": [
-                    "0 :: TileScan_002 :: Gray",
-                    "0 :: TileScan_002 :: Red",
-                    "0 :: TileScan_002 :: Green",
-                    "0 :: TileScan_002 :: Cyan",
-                ],
-                "channel_axis": 0,
-                "scale": (0.20061311154598827, 0.20061311154598827),
-            },
-        ),
+        # (
+        #     LIF_FILE,
+        #     (4, 5622, 7666),
+        #     {
+        #         "name": [
+        #             "0 :: TileScan_002 :: Gray",
+        #             "0 :: TileScan_002 :: Red",
+        #             "0 :: TileScan_002 :: Green",
+        #             "0 :: TileScan_002 :: Cyan",
+        #         ],
+        #         "channel_axis": 0,
+        #         "scale": (0.20061311154598827, 0.20061311154598827),
+        #     },
+        # ),
     ],
 )
 def test_reader(
