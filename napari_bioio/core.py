@@ -113,7 +113,7 @@ def _get_meta(path: PathLike, data: xr.DataArray, img: BioImage) -> dict[str, An
         meta["scale"] = tuple(scale)
 
     # Apply all other metadata
-    img_meta = {"aicsimage": img, "raw_image_metadata": img.metadata}
+    img_meta = {"bioimage": img, "raw_image_metadata": img.metadata}
     try:
         img_meta["ome_types"] = img.ome_metadata
     except Exception:
