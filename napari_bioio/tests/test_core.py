@@ -1,15 +1,15 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
+from collections.abc import Callable
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, Tuple, Type
+from typing import TYPE_CHECKING, Any
 
 import dask.array as da
 import npe2
 import numpy as np
 import pytest
 
-from napari_aicsimageio import core
+from napari_bioio import core
 
 if TYPE_CHECKING:
     from napari import Viewer
@@ -21,8 +21,8 @@ if TYPE_CHECKING:
 PNG_FILE = "example.png"
 GIF_FILE = "example.gif"
 OME_TIFF = "pipeline-4.ome.tiff"
-LIF_FILE = "tiled.lif"
-CZI_FILE = "variable_scene_shape_first_scene_pyramid.czi"
+# LIF_FILE = "tiled.lif"
+# CZI_FILE = "variable_scene_shape_first_scene_pyramid.czi"
 
 ###############################################################################
 
@@ -39,19 +39,19 @@ CZI_FILE = "variable_scene_shape_first_scene_pyramid.czi"
     [
         (PNG_FILE, (800, 537, 4), {"name": Path(PNG_FILE).stem, "rgb": True}),
         (GIF_FILE, (72, 268, 268, 3), {"name": Path(GIF_FILE).stem, "rgb": True}),
-        (
-            CZI_FILE,
-            (3, 6183, 7705),
-            {
-                "name": [
-                    "0 :: A1-A1 :: EGFP",
-                    "0 :: A1-A1 :: mCher",
-                    "0 :: A1-A1 :: PGC",
-                ],
-                "channel_axis": 0,
-                "scale": (0.908210704883533, 0.908210704883533),
-            },
-        ),
+        # (
+        #     CZI_FILE,
+        #     (3, 6183, 7705),
+        #     {
+        #         "name": [
+        #             "0 :: A1-A1 :: EGFP",
+        #             "0 :: A1-A1 :: mCher",
+        #             "0 :: A1-A1 :: PGC",
+        #         ],
+        #         "channel_axis": 0,
+        #         "scale": (0.908210704883533, 0.908210704883533),
+        #     },
+        # ),
         (
             OME_TIFF,
             (4, 65, 600, 900),
@@ -66,20 +66,20 @@ CZI_FILE = "variable_scene_shape_first_scene_pyramid.czi"
                 "scale": (0.29, 0.10833333333333332, 0.10833333333333332),
             },
         ),
-        (
-            LIF_FILE,
-            (4, 5622, 7666),
-            {
-                "name": [
-                    "0 :: TileScan_002 :: Gray",
-                    "0 :: TileScan_002 :: Red",
-                    "0 :: TileScan_002 :: Green",
-                    "0 :: TileScan_002 :: Cyan",
-                ],
-                "channel_axis": 0,
-                "scale": (0.20061311154598827, 0.20061311154598827),
-            },
-        ),
+        # (
+        #     LIF_FILE,
+        #     (4, 5622, 7666),
+        #     {
+        #         "name": [
+        #             "0 :: TileScan_002 :: Gray",
+        #             "0 :: TileScan_002 :: Red",
+        #             "0 :: TileScan_002 :: Green",
+        #             "0 :: TileScan_002 :: Cyan",
+        #         ],
+        #         "channel_axis": 0,
+        #         "scale": (0.20061311154598827, 0.20061311154598827),
+        #     },
+        # ),
     ],
 )
 def test_reader(
@@ -87,8 +87,8 @@ def test_reader(
     filename: str,
     in_memory: bool,
     expected_dtype: type,
-    expected_shape: Tuple[int, ...],
-    expected_meta: Dict[str, Any],
+    expected_shape: tuple[int, ...],
+    expected_meta: dict[str, Any],
     npe2pm: "TestPluginManager",
 ) -> None:
     # Resolve filename to filepath
@@ -117,7 +117,7 @@ def test_reader(
         assert meta == expected_meta  # type: ignore
 
         # confirm that this also works via npe2
-        with npe2pm.tmp_plugin(package="napari-aicsimageio") as plugin:
+        with npe2pm.tmp_plugin(package="napari-bioio") as plugin:
             [via_npe2] = npe2.read([path], stack=False, plugin_name=plugin.name)
             assert via_npe2[0].shape == data.shape  # type: ignore
 
@@ -145,8 +145,8 @@ def test_for_multiscene_widget(
     resources_dir: Path,
     filename: str,
     in_memory: bool,
-    expected_dtype: Type["ArrayLike"],
-    expected_shape: Tuple[int, ...],
+    expected_dtype: type["ArrayLike"],
+    expected_shape: tuple[int, ...],
 ) -> None:
     # Make a viewer
     viewer = make_napari_viewer()

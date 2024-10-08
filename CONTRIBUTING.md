@@ -5,20 +5,20 @@ helps, and credit will always be given.
 
 ## Get Started!
 
-Ready to contribute? Here's how to set up `napari-aicsimageio` for local development.
+Ready to contribute? Here's how to set up `napari-bioio` for local development.
 
-1. Fork the `napari-aicsimageio` repo on GitHub.
+1. Fork the `napari-bioio` repo on GitHub.
 
 2. Clone your fork locally:
 
     ```bash
-    git clone git@github.com:{your_name_here}/napari-aicsimageio.git
+    git clone git@github.com:{your_name_here}/napari-bioio.git
     ```
 
 3. Install the project in editable mode. (It is also recommended to work in a virtualenv or anaconda environment):
 
     ```bash
-    cd napari-aicsimageio/
+    cd napari-bioio/
     pip install -e .[dev]
     ```
 

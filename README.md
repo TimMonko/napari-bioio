@@ -1,10 +1,10 @@
-# napari-aicsimageio
+# napari-bioio
 
-[![License](https://img.shields.io/pypi/l/napari-aicsimageio.svg?color=green)](https://github.com/AllenCellModeling/napari-aicsimageio/raw/main/LICENSE)
+[![License](https://img.shields.io/pypi/l/napari-bioio.svg?color=green)](https://github.com/AllenCellModeling/napari-aicsimageio/raw/main/LICENSE)
 [![Build Status](https://github.com/AllenCellModeling/napari-aicsimageio/workflows/Build%20Main/badge.svg)](https://github.com/AllenCellModeling/napari-aicsimageio/actions)
 [![Code Coverage](https://codecov.io/gh/AllenCellModeling/napari-aicsimageio/branch/main/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/napari-aicsimageio)
 
-AICSImageIO bindings for napari
+BioIO bindings for napari
 
 ---
 
@@ -13,16 +13,9 @@ AICSImageIO bindings for napari
 -   Supports reading metadata and imaging data for:
     -   `OME-TIFF`
     -   `TIFF`
-    -   `CZI` (Zeiss)
-    -   `LIF` (Leica)
     -   `ND2` (Nikon)
     -   `DV` (DeltaVision)
-    -   Any formats supported by [aicsimageio](https://github.com/AllenCellModeling/aicsimageio)
-    -   Any formats supported by [bioformats](https://github.com/tlambert03/bioformats_jar)
-(Note: requires `java` and `mvn` executables)
-        -   `SLD` (Slidebook)
-        -   `SVS` (Aperio)
-        -   [Full List](https://docs.openmicroscopy.org/bio-formats/6.5.1/supported-formats.html)
+    -   Any formats supported by [BioIO](https://github.com/bioio-devs/bioio)
     -   Any additional format supported by [imageio](https://github.com/imageio/imageio)
         -   `PNG`
         -   `JPG`
@@ -30,11 +23,19 @@ AICSImageIO bindings for napari
         -   `AVI`
         -   [Full List](https://imageio.readthedocs.io/en/v2.4.1/formats.html)
 
-_While upstream `aicsimageio` is released under BSD-3 license, this plugin is released under GPLv3 license because it installs all format reader dependencies._
+Many more formats are supported but released under different licenses and will need to be installed separately:
+
+- **GPL** `bioio-czi`: Zeiss (CZI) files
+- **GPL** `bioio-lif`: Leica (LIF) files
+- **GPL** `bioio-bioformats`: Any formats supported by [bioformats](https://github.com/tlambert03/bioformats_jar)
+(Note: requires `java` and `mvn` executables)
+  -   `SLD` (Slidebook)
+  -   `SVS` (Aperio)
+  -   [Full List](https://docs.openmicroscopy.org/bio-formats/6.5.1/supported-formats.html)
 
 ## Installation
 
-**Stable Release:** `pip install napari-aicsimageio` or `conda install napari-aicsimageio -c conda-forge`<br>
+**Stable Release:** `pip install napari-bioio`<br>
 **Development Head:** `pip install git+https://github.com/AllenCellModeling/napari-aicsimageio.git`
 
 > **Warning**  
@@ -52,7 +53,7 @@ the following two conditions:
 
 If either of these conditions isn't met, the image is loaded in chunks only as needed.
 
-### Use napari-aicsimageio as the Reader for All File Formats
+### Use napari-bioio as the Reader for All File Formats
 
 If you want to force napari to always use this plugin as the reader for all file formats,
 try running this snippet:
@@ -60,7 +61,7 @@ try running this snippet:
 ```python
 from napari.settings import get_settings
 
-get_settings().plugins.extension2reader = {'*': 'napari-aicsimageio', **get_settings().plugins.extension2reader}
+get_settings().plugins.extension2reader = {'*': 'napari-bioio', **get_settings().plugins.extension2reader}
 ```
 
 For more details, see [#37](https://github.com/AllenCellModeling/napari-aicsimageio/issues/37).
@@ -70,7 +71,7 @@ For more details, see [#37](https://github.com/AllenCellModeling/napari-aicsimag
 #### General Image Reading
 
 All image file formats supported by
-[aicsimageio](https://github.com/AllenCellModeling/aicsimageio) will be read and all
+[BioIO](https://github.com/bioio-devs/bioio) will be read and all
 raw data will be available in the napari viewer.
 
 In addition, when reading an OME-TIFF, you can view all OME metadata directly in the
@@ -114,8 +115,9 @@ as an `OME` object from `ome-types`.
 
 Lastly, if the underlying file format reader has an OME metadata conversion function,
 you may additionally see a key in the napari layer metadata dictionary
-called `"ome_types"`. For example, because the AICSImageIO
-`CZIReader` and `BioformatsReader` both support converting raw image metadata
+called `"ome_types"`. For example, because [bioio-czi](https://github.com/bioio-devs/bioio-czi)
+and [bioio-bioformats](https://github.com/bioio-devs/bioio-bioformats)
+both support converting raw image metadata
 to OME metadata, you will see an `"ome_types"` key that stores the metadata transformed
 into the OME metadata model.
 
@@ -125,7 +127,7 @@ viewer.layers[0].metadata["ome_types"]  # OME object from ome-types
 
 #### Mosaic Reading
 
-When reading CZI or LIF images, if the image is a mosaic tiled image, `napari-aicsimageio`
+When reading CZI or LIF images, if the image is a mosaic tiled image, `napari-bioio`
 will return the reconstructed image:
 
 ![screenshot of a reconstructed / restitched mosaic tile LIF](https://raw.githubusercontent.com/AllenCellModeling/napari-aicsimageio/main/images/tiled-lif.png)
@@ -134,14 +136,14 @@ will return the reconstructed image:
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.
 
-For additional file format support, contributed directly to
-[AICSImageIO](https://github.com/AllenCellModeling/aicsimageio).
-New file format support will become directly available in this
-plugin on new `aicsimageio` releases.
+For additional file format support, contributed directly to one of the existing
+[BioIO](https://github.com/bioio-devs/bioio) plugins.
+
+Or create your own plugin by using [our cookiecutter](https://github.com/bioio-devs/cookiecutter-bioio-reader).
 
 ## Citation
 
-If you find `aicsimageio` and `napari-aicsimageio` useful, please cite this work as:
+If you find `bioio` and `napari-bioio` useful, please cite this work as:
 
 > Eva Maxfield Brown, Dan Toloudis, Jamie Sherman, Madison Swain-Bowden, Talley Lambert, AICSImageIO Contributors (2021). AICSImageIO: Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in Pure Python [Computer software]. GitHub. https://github.com/AllenCellModeling/aicsimageio
 
@@ -165,5 +167,3 @@ bibtex:
   url       = {https://github.com/AllenCellModeling/napari-aicsimageio}
 }
 ```
-
-_Free software: GPLv3_
